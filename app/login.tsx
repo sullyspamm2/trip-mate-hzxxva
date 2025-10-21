@@ -61,7 +61,7 @@ export default function LoginScreen() {
         <View style={styles.content}>
           <View style={styles.header}>
             <Text style={styles.logo}>✈️</Text>
-            <Text style={styles.title}>Covoyageurs</Text>
+            <Text style={styles.appName}>CoTrip</Text>
             <Text style={styles.subtitle}>
               Trouvez vos compagnons de voyage idéaux
             </Text>
@@ -185,11 +185,15 @@ const styles = StyleSheet.create({
     fontSize: 80,
     marginBottom: 16,
   },
-  title: {
-    fontSize: 36,
-    fontWeight: '800',
-    color: colors.text,
+  appName: {
+    fontSize: 48,
+    fontWeight: '900',
+    color: colors.primary,
     marginBottom: 8,
+    letterSpacing: -1,
+    textShadowColor: 'rgba(224, 122, 95, 0.3)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
   },
   subtitle: {
     fontSize: 16,

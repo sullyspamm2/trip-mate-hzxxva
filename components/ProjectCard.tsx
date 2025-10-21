@@ -13,6 +13,7 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   const router = useRouter();
+  const isFull = project.acceptedTravelers.length >= project.travelersNeeded;
 
   const getCountryFlags = () => {
     return project.countries
@@ -31,39 +32,49 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
   return (
     <Pressable
-      style={styles.card}
+      style={[styles.card, isFull && styles.cardFull]}
       onPress={() => {
         console.log('Project card pressed:', project.id);
-        // Navigation to project details would go here
+        router.push(`/project/${project.id}`);
       }}
     >
+      {isFull && (
+        <View style={styles.fullBadge}>
+          <Text style={styles.fullBadgeText}>FULL</Text>
+        </View>
+      )}
+
       <View style={styles.header}>
-        <Text style={styles.countryFlags}>{getCountryFlags()}</Text>
-        <View style={styles.travelersNeeded}>
-          <IconSymbol name="person.2.fill" size={16} color={colors.primary} />
-          <Text style={styles.travelersText}>{project.travelersNeeded}</Text>
+        <Text style={[styles.countryFlags, isFull && styles.dimmed]}>{getCountryFlags()}</Text>
+        <View style={styles.travelersInfo}>
+          <View style={styles.travelersNeeded}>
+            <IconSymbol name="person.2.fill" size={16} color={isFull ? colors.textSecondary : colors.primary} />
+            <Text style={[styles.travelersText, isFull && styles.dimmed]}>
+              {project.acceptedTravelers.length}/{project.travelersNeeded}
+            </Text>
+          </View>
         </View>
       </View>
 
-      <Text style={styles.title}>{project.title}</Text>
-      <Text style={styles.description} numberOfLines={3}>
+      <Text style={[styles.title, isFull && styles.dimmed]}>{project.title}</Text>
+      <Text style={[styles.description, isFull && styles.dimmed]} numberOfLines={3}>
         {project.description}
       </Text>
 
       <View style={styles.footer}>
         <View style={styles.authorInfo}>
-          <View style={styles.avatar}>
+          <View style={[styles.avatar, isFull && styles.dimmed]}>
             <Text style={styles.avatarText}>
               {project.authorName.charAt(0).toUpperCase()}
             </Text>
           </View>
-          <Text style={styles.authorName}>{project.authorName}</Text>
+          <Text style={[styles.authorName, isFull && styles.dimmed]}>{project.authorName}</Text>
         </View>
 
         {project.startDate && (
           <View style={styles.dateInfo}>
-            <IconSymbol name="calendar" size={14} color={colors.textSecondary} />
-            <Text style={styles.dateText}>{formatDate(project.startDate)}</Text>
+            <IconSymbol name="calendar" size={14} color={isFull ? colors.textSecondary : colors.textSecondary} />
+            <Text style={[styles.dateText, isFull && styles.dimmed]}>{formatDate(project.startDate)}</Text>
           </View>
         )}
       </View>
@@ -71,8 +82,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       {project.tags && project.tags.length > 0 && (
         <View style={styles.tags}>
           {project.tags.slice(0, 3).map((tag, index) => (
-            <View key={index} style={styles.tag}>
-              <Text style={styles.tagText}>{tag}</Text>
+            <View key={index} style={[styles.tag, isFull && styles.tagDimmed]}>
+              <Text style={[styles.tagText, isFull && styles.dimmed]}>{tag}</Text>
             </View>
           ))}
         </View>
@@ -91,6 +102,29 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderWidth: 1,
     borderColor: colors.border,
+    position: 'relative',
+  },
+  cardFull: {
+    opacity: 0.7,
+    backgroundColor: colors.background,
+  },
+  fullBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: colors.primary,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    zIndex: 10,
+    boxShadow: '0px 2px 8px rgba(224, 122, 95, 0.4)',
+    elevation: 4,
+  },
+  fullBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1,
   },
   header: {
     flexDirection: 'row',
@@ -100,6 +134,11 @@ const styles = StyleSheet.create({
   },
   countryFlags: {
     fontSize: 28,
+  },
+  travelersInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   travelersNeeded: {
     flexDirection: 'row',
@@ -178,9 +217,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
+  tagDimmed: {
+    backgroundColor: colors.card,
+  },
   tagText: {
     fontSize: 12,
     color: colors.text,
     fontWeight: '500',
+  },
+  dimmed: {
+    opacity: 0.6,
   },
 });

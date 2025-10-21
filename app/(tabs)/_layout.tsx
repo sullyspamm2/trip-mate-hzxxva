@@ -15,6 +15,12 @@ export default function TabLayout() {
       label: 'Projets',
     },
     {
+      name: 'cotchat',
+      route: '/(tabs)/cotchat',
+      icon: 'message.fill',
+      label: 'CoTchat',
+    },
+    {
       name: 'deals',
       route: '/(tabs)/deals',
       icon: 'lightbulb.fill',
@@ -41,6 +47,10 @@ export default function TabLayout() {
           <Icon sf="globe" drawable="ic_home" />
           <Label>Projets</Label>
         </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="cotchat">
+          <Icon sf="message.fill" drawable="ic_chat" />
+          <Label>CoTchat</Label>
+        </NativeTabs.Trigger>
         <NativeTabs.Trigger name="deals">
           <Icon sf="lightbulb.fill" drawable="ic_deals" />
           <Label>Bons Plans</Label>
@@ -66,6 +76,7 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="cotchat" />
         <Stack.Screen name="deals" />
         <Stack.Screen name="create" />
         <Stack.Screen name="profile" />

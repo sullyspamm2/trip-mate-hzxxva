@@ -53,7 +53,7 @@ export default function HomeScreen() {
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: 'Covoyageurs',
+            title: 'CoTrip',
             headerRight: renderHeaderRight,
             headerLargeTitle: true,
           }}
@@ -65,7 +65,7 @@ export default function HomeScreen() {
           <View style={styles.header}>
             {Platform.OS !== 'ios' && (
               <View style={styles.titleContainer}>
-                <Text style={styles.title}>Covoyageurs</Text>
+                <Text style={styles.title}>CoTrip</Text>
                 <Pressable onPress={() => setShowFilters(!showFilters)}>
                   <IconSymbol
                     name={showFilters ? 'line.3.horizontal.decrease.circle.fill' : 'line.3.horizontal.decrease.circle'}
@@ -159,9 +159,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: colors.text,
+    fontSize: 40,
+    fontWeight: '900',
+    color: colors.primary,
+    letterSpacing: -1,
   },
   searchContainer: {
     flexDirection: 'row',
