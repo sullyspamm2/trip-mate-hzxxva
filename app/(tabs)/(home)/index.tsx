@@ -15,6 +15,7 @@ import { colors } from '@/styles/commonStyles';
 import { MOCK_PROJECTS } from '@/data/mockProjects';
 import ProjectCard from '@/components/ProjectCard';
 import CountrySelector from '@/components/CountrySelector';
+import BackgroundImages from '@/components/BackgroundImages';
 
 export default function HomeScreen() {
   const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
@@ -59,73 +60,76 @@ export default function HomeScreen() {
         />
       )}
       <View style={styles.container}>
-        <View style={styles.header}>
-          {Platform.OS !== 'ios' && (
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>Covoyageurs</Text>
-              <Pressable onPress={() => setShowFilters(!showFilters)}>
-                <IconSymbol
-                  name={showFilters ? 'line.3.horizontal.decrease.circle.fill' : 'line.3.horizontal.decrease.circle'}
-                  color={colors.primary}
-                  size={28}
-                />
-              </Pressable>
-            </View>
-          )}
+        <BackgroundImages />
+        <View style={styles.content}>
+          <View style={styles.header}>
+            {Platform.OS !== 'ios' && (
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>Covoyageurs</Text>
+                <Pressable onPress={() => setShowFilters(!showFilters)}>
+                  <IconSymbol
+                    name={showFilters ? 'line.3.horizontal.decrease.circle.fill' : 'line.3.horizontal.decrease.circle'}
+                    color={colors.primary}
+                    size={28}
+                  />
+                </Pressable>
+              </View>
+            )}
 
-          <View style={styles.searchContainer}>
-            <IconSymbol name="magnifyingglass" size={20} color={colors.textSecondary} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Rechercher un projet..."
-              placeholderTextColor={colors.textSecondary}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
+            <View style={styles.searchContainer}>
+              <IconSymbol name="magnifyingglass" size={20} color={colors.textSecondary} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Rechercher un projet..."
+                placeholderTextColor={colors.textSecondary}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+            </View>
+
+            {showFilters && (
+              <View style={styles.filtersContainer}>
+                <Text style={styles.filterLabel}>Filtrer par pays</Text>
+                <CountrySelector
+                  selectedCountries={selectedCountries}
+                  onCountriesChange={setSelectedCountries}
+                  multiSelect={true}
+                />
+                {selectedCountries.length > 0 && (
+                  <Pressable
+                    style={styles.clearButton}
+                    onPress={() => setSelectedCountries([])}
+                  >
+                    <Text style={styles.clearButtonText}>Effacer les filtres</Text>
+                  </Pressable>
+                )}
+              </View>
+            )}
           </View>
 
-          {showFilters && (
-            <View style={styles.filtersContainer}>
-              <Text style={styles.filterLabel}>Filtrer par pays</Text>
-              <CountrySelector
-                selectedCountries={selectedCountries}
-                onCountriesChange={setSelectedCountries}
-                multiSelect={true}
-              />
-              {selectedCountries.length > 0 && (
-                <Pressable
-                  style={styles.clearButton}
-                  onPress={() => setSelectedCountries([])}
-                >
-                  <Text style={styles.clearButtonText}>Effacer les filtres</Text>
-                </Pressable>
-              )}
-            </View>
-          )}
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={[
+              styles.scrollContent,
+              Platform.OS !== 'ios' && styles.scrollContentWithTabBar,
+            ]}
+            showsVerticalScrollIndicator={false}
+          >
+            {filteredProjects.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateIcon}>🌍</Text>
+                <Text style={styles.emptyStateTitle}>Aucun projet trouvé</Text>
+                <Text style={styles.emptyStateText}>
+                  Essayez de modifier vos filtres ou créez votre propre projet de voyage !
+                </Text>
+              </View>
+            ) : (
+              filteredProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))
+            )}
+          </ScrollView>
         </View>
-
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={[
-            styles.scrollContent,
-            Platform.OS !== 'ios' && styles.scrollContentWithTabBar,
-          ]}
-          showsVerticalScrollIndicator={false}
-        >
-          {filteredProjects.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyStateIcon}>🌍</Text>
-              <Text style={styles.emptyStateTitle}>Aucun projet trouvé</Text>
-              <Text style={styles.emptyStateText}>
-                Essayez de modifier vos filtres ou créez votre propre projet de voyage !
-              </Text>
-            </View>
-          ) : (
-            filteredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))
-          )}
-        </ScrollView>
       </View>
     </>
   );
@@ -135,6 +139,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  content: {
+    flex: 1,
+    zIndex: 1,
   },
   header: {
     backgroundColor: colors.background,

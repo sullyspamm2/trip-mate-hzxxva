@@ -7,13 +7,18 @@ import FloatingTabBar, { TabBarItem } from '@/components/FloatingTabBar';
 import { colors } from '@/styles/commonStyles';
 
 export default function TabLayout() {
-  // Define the tabs configuration
   const tabs: TabBarItem[] = [
     {
       name: '(home)',
       route: '/(tabs)/(home)/',
       icon: 'globe',
       label: 'Projets',
+    },
+    {
+      name: 'deals',
+      route: '/(tabs)/deals',
+      icon: 'lightbulb.fill',
+      label: 'Bons Plans',
     },
     {
       name: 'create',
@@ -29,13 +34,16 @@ export default function TabLayout() {
     },
   ];
 
-  // Use NativeTabs for iOS, custom FloatingTabBar for Android and Web
   if (Platform.OS === 'ios') {
     return (
       <NativeTabs>
         <NativeTabs.Trigger name="(home)">
           <Icon sf="globe" drawable="ic_home" />
           <Label>Projets</Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name="deals">
+          <Icon sf="lightbulb.fill" drawable="ic_deals" />
+          <Label>Bons Plans</Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="create">
           <Icon sf="plus.circle.fill" drawable="ic_create" />
@@ -49,7 +57,6 @@ export default function TabLayout() {
     );
   }
 
-  // For Android and Web, use Stack navigation with custom floating tab bar
   return (
     <>
       <Stack
@@ -59,6 +66,7 @@ export default function TabLayout() {
         }}
       >
         <Stack.Screen name="(home)" />
+        <Stack.Screen name="deals" />
         <Stack.Screen name="create" />
         <Stack.Screen name="profile" />
       </Stack>

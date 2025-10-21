@@ -15,6 +15,7 @@ import { colors } from '@/styles/commonStyles';
 import { IconSymbol } from '@/components/IconSymbol';
 import CountrySelector from '@/components/CountrySelector';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import BackgroundImages from '@/components/BackgroundImages';
 
 export default function CreateScreen() {
   const [title, setTitle] = useState('');
@@ -58,7 +59,6 @@ export default function CreateScreen() {
         {
           text: 'OK',
           onPress: () => {
-            // Reset form
             setTitle('');
             setDescription('');
             setSelectedCountries([]);
@@ -92,6 +92,7 @@ export default function CreateScreen() {
         />
       )}
       <View style={styles.container}>
+        <BackgroundImages />
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={[
@@ -260,6 +261,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    zIndex: 1,
   },
   scrollContent: {
     padding: 16,
