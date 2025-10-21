@@ -1,77 +1,48 @@
-import React from "react";
-import { Stack, Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, View, Text, Alert, Platform } from "react-native";
-import { IconSymbol } from "@/components/IconSymbol";
-import { GlassView } from "expo-glass-effect";
-import { useTheme } from "@react-navigation/native";
 
-const ICON_COLOR = "#007AFF";
+import React, { useState } from 'react';
+import { Stack } from 'expo-router';
+import {
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+  Platform,
+  TextInput,
+} from 'react-native';
+import { IconSymbol } from '@/components/IconSymbol';
+import { colors } from '@/styles/commonStyles';
+import { MOCK_PROJECTS } from '@/data/mockProjects';
+import ProjectCard from '@/components/ProjectCard';
+import CountrySelector from '@/components/CountrySelector';
 
 export default function HomeScreen() {
-  const theme = useTheme();
-  const modalDemos = [
-    {
-      title: "Standard Modal",
-      description: "Full screen modal presentation",
-      route: "/modal",
-      color: "#007AFF",
-    },
-    {
-      title: "Form Sheet",
-      description: "Bottom sheet with detents and grabber",
-      route: "/formsheet",
-      color: "#34C759",
-    },
-    {
-      title: "Transparent Modal",
-      description: "Overlay without obscuring background",
-      route: "/transparent-modal",
-      color: "#FF9500",
-    }
-  ];
+  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const renderModalDemo = ({ item }: { item: (typeof modalDemos)[0] }) => (
-    <GlassView style={[
-      styles.demoCard,
-      Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }
-    ]} glassEffectStyle="regular">
-      <View style={[styles.demoIcon, { backgroundColor: item.color }]}>
-        <IconSymbol name="square.grid.3x3" color="white" size={24} />
-      </View>
-      <View style={styles.demoContent}>
-        <Text style={[styles.demoTitle, { color: theme.colors.text }]}>{item.title}</Text>
-        <Text style={[styles.demoDescription, { color: theme.dark ? '#98989D' : '#666' }]}>{item.description}</Text>
-      </View>
-      <Link href={item.route as any} asChild>
-        <Pressable>
-          <GlassView style={[
-            styles.tryButton,
-            Platform.OS !== 'ios' && { backgroundColor: theme.dark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }
-          ]} glassEffectStyle="clear">
-            <Text style={[styles.tryButtonText, { color: theme.colors.primary }]}>Try It</Text>
-          </GlassView>
-        </Pressable>
-      </Link>
-    </GlassView>
-  );
+  const filteredProjects = MOCK_PROJECTS.filter((project) => {
+    const matchesSearch =
+      searchQuery === '' ||
+      project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesCountries =
+      selectedCountries.length === 0 ||
+      project.countries.some((country) => selectedCountries.includes(country));
+
+    return matchesSearch && matchesCountries;
+  });
 
   const renderHeaderRight = () => (
     <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
-      style={styles.headerButtonContainer}
-    >
-      <IconSymbol name="plus" color={theme.colors.primary} />
-    </Pressable>
-  );
-
-  const renderHeaderLeft = () => (
-    <Pressable
-      onPress={() => Alert.alert("Not Implemented", "This feature is not implemented yet")}
+      onPress={() => setShowFilters(!showFilters)}
       style={styles.headerButtonContainer}
     >
       <IconSymbol
-        name="gear"
-        color={theme.colors.primary}
+        name={showFilters ? 'line.3.horizontal.decrease.circle.fill' : 'line.3.horizontal.decrease.circle'}
+        color={colors.primary}
+        size={24}
       />
     </Pressable>
   );
@@ -81,24 +52,80 @@ export default function HomeScreen() {
       {Platform.OS === 'ios' && (
         <Stack.Screen
           options={{
-            title: "Building the app...",
+            title: 'Covoyageurs',
             headerRight: renderHeaderRight,
-            headerLeft: renderHeaderLeft,
+            headerLargeTitle: true,
           }}
         />
       )}
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <FlatList
-          data={modalDemos}
-          renderItem={renderModalDemo}
-          keyExtractor={(item) => item.route}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          {Platform.OS !== 'ios' && (
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Covoyageurs</Text>
+              <Pressable onPress={() => setShowFilters(!showFilters)}>
+                <IconSymbol
+                  name={showFilters ? 'line.3.horizontal.decrease.circle.fill' : 'line.3.horizontal.decrease.circle'}
+                  color={colors.primary}
+                  size={28}
+                />
+              </Pressable>
+            </View>
+          )}
+
+          <View style={styles.searchContainer}>
+            <IconSymbol name="magnifyingglass" size={20} color={colors.textSecondary} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Rechercher un projet..."
+              placeholderTextColor={colors.textSecondary}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+
+          {showFilters && (
+            <View style={styles.filtersContainer}>
+              <Text style={styles.filterLabel}>Filtrer par pays</Text>
+              <CountrySelector
+                selectedCountries={selectedCountries}
+                onCountriesChange={setSelectedCountries}
+                multiSelect={true}
+              />
+              {selectedCountries.length > 0 && (
+                <Pressable
+                  style={styles.clearButton}
+                  onPress={() => setSelectedCountries([])}
+                >
+                  <Text style={styles.clearButtonText}>Effacer les filtres</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
+        </View>
+
+        <ScrollView
+          style={styles.scrollView}
           contentContainerStyle={[
-            styles.listContainer,
-            Platform.OS !== 'ios' && styles.listContainerWithTabBar
+            styles.scrollContent,
+            Platform.OS !== 'ios' && styles.scrollContentWithTabBar,
           ]}
-          contentInsetAdjustmentBehavior="automatic"
           showsVerticalScrollIndicator={false}
-        />
+        >
+          {filteredProjects.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateIcon}>🌍</Text>
+              <Text style={styles.emptyStateTitle}>Aucun projet trouvé</Text>
+              <Text style={styles.emptyStateText}>
+                Essayez de modifier vos filtres ou créez votre propre projet de voyage !
+              </Text>
+            </View>
+          ) : (
+            filteredProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))
+          )}
+        </ScrollView>
       </View>
     </>
   );
@@ -107,55 +134,94 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor handled dynamically
+    backgroundColor: colors.background,
   },
-  listContainer: {
-    paddingVertical: 16,
+  header: {
+    backgroundColor: colors.background,
     paddingHorizontal: 16,
+    paddingTop: Platform.OS === 'ios' ? 0 : 16,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
   },
-  listContainerWithTabBar: {
-    paddingBottom: 100, // Extra padding for floating tab bar
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  demoCard: {
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+  title: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  demoIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  demoContent: {
+  searchInput: {
     flex: 1,
+    fontSize: 16,
+    color: colors.text,
   },
-  demoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
-    // color handled dynamically
+  filtersContainer: {
+    marginTop: 16,
   },
-  demoDescription: {
+  filterLabel: {
     fontSize: 14,
-    lineHeight: 18,
-    // color handled dynamically
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 8,
+  },
+  clearButton: {
+    marginTop: 12,
+    alignSelf: 'flex-start',
+  },
+  clearButtonText: {
+    fontSize: 14,
+    color: colors.primary,
+    fontWeight: '600',
   },
   headerButtonContainer: {
     padding: 6,
   },
-  tryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 6,
+  scrollView: {
+    flex: 1,
   },
-  tryButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    // color handled dynamically
+  scrollContent: {
+    padding: 16,
+  },
+  scrollContentWithTabBar: {
+    paddingBottom: 100,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 40,
+  },
+  emptyStateIcon: {
+    fontSize: 64,
+    marginBottom: 16,
+  },
+  emptyStateTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptyStateText: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 24,
   },
 });

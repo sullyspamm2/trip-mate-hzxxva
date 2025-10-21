@@ -1,14 +1,19 @@
+
 import { StyleSheet, ViewStyle, TextStyle } from 'react-native';
 
+// Travel-inspired color palette
 export const colors = {
-  primary: '#162456',    // Material Blue
-  secondary: '#193cb8',  // Darker Blue
-  accent: '#64B5F6',     // Light Blue
-  background: '#101824',  // Keeping dark background
-  backgroundAlt: '#162133',  // Keeping dark background
-  text: '#e3e3e3',       // Keeping light text
-  grey: '#90CAF9',       // Light Blue Grey
-  card: '#193cb8',       // Keeping dark card background
+  background: '#f9f7f3',        // Off-white, clean and bright
+  text: '#3d405b',              // Dark grayish-purple for readability
+  textSecondary: '#81b29a',     // Muted green for secondary text
+  primary: '#e07a5f',           // Burnt orange, warm and inviting
+  secondary: '#3d405b',         // Dark grayish-purple
+  accent: '#f2cc8f',            // Mustard yellow for highlights
+  card: '#ffffff',              // White for content containers
+  highlight: '#e07a5f',         // Burnt orange for important elements
+  border: '#e4e4e7',            // Light border
+  success: '#81b29a',           // Muted green
+  backgroundAlt: '#fefefe',     // Slightly off-white
 };
 
 export const buttonStyles = StyleSheet.create({
@@ -35,8 +40,6 @@ export const commonStyles = StyleSheet.create({
     backgroundColor: colors.background,
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   content: {
     flex: 1,
@@ -71,19 +74,19 @@ export const commonStyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   card: {
-    backgroundColor: colors.backgroundAlt,
-    borderColor: colors.grey,
+    backgroundColor: colors.card,
+    borderColor: colors.border,
     borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: 12,
+    padding: 16,
     marginVertical: 8,
     width: '100%',
-    boxShadow: '0px 2px 3px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
     elevation: 2,
   },
   icon: {
     width: 60,
     height: 60,
-    tintColor: "white",
+    tintColor: colors.primary,
   },
 });
